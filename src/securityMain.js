@@ -16,16 +16,20 @@ const rl = readline.createInterface({
     output: process.stdout,
 });
 
+var num = 1;
+fs.writeFileSync(__dirname + '/../files/security.log', '', 'utf8');
+
 async function performanceInit() {
     await passwordClient.passwordValidation('password').then(function (result) {
+        console.log();
         main();
     });
 }
 
 async function performanceTest(password) {
     await passwordClient.passwordValidation(password).then(function (result) {
-        // console.log(result.predictPoint);
         let today = new Date();
+
         let year = today.getFullYear(); // 년도
         let month = today.getMonth() + 1; // 월
         let date = today.getDate(); // 날짜
@@ -34,15 +38,23 @@ async function performanceTest(password) {
         let seconds = today.getSeconds(); // 초
 
         let timestamp = `${year}.${month}.${date}. ${hours}:${minutes}:${parseInt(seconds / 10) == 0 ? '0' + seconds : seconds}`;
+        let orig = origPoint(password);
+        let predict = calPoint(result.predictPoint);
+        let sucFail = orig == predict ? 'Success' : 'Fail';
 
-        console.log(`${timestamp}  ${password}  L${origPoint(password)}  L${calPoint(result.predictPoint)}  ${'일치 여부'}`);
+        console.log(`${timestamp},  ${password}          ${orig}   ${predict}   ${sucFail}`);
         console.log();
+
+        fs.appendFileSync(__dirname + '/../files/security.log', `${timestamp},  ${password}          ${orig}   ${predict}   ${sucFail}\n`, 'utf8');
+
         main();
     });
 }
 
 function main() {
-    rl.setPrompt(`시험데이터 입력: `);
+    rl.setPrompt(`${num}. 시험데이터 입력: `);
+    num++;
+
     rl.prompt();
 }
 
@@ -61,14 +73,6 @@ rl.on('close', function () {
 });
 
 function origPoint(password) {
-    // var zxcvbnPoint =
-    //     parseInt(parseInt(koreanZxcvbn(password).score * 2 + comparePoint.frequencyComparePoint(password)) / 2) < 5
-    //         ? parseInt(parseInt(koreanZxcvbn(password).score * 2 + comparePoint.frequencyComparePoint(password)) / 2)
-    //         : 4;
-    // var luds = parseInt(parseInt(ludsPoint.ludsPoint(password).nScore) / 20) < 5 ? parseInt(parseInt(ludsPoint.ludsPoint(password).nScore) / 20) : 4;
-    // var levenshteinPoint = parseInt(levenshteinDistance.totalLVD(password)) < 3 ? 0 : 1;
-    // var feature = [zxcvbnPoint, luds, levenshteinPoint];
-
     let datas = fs.readFileSync(__dirname + '/../files/origPasswordLevel.txt', 'utf8');
     datas = datas.split('\n');
 
@@ -76,7 +80,21 @@ function origPoint(password) {
         return data.split('\r')[0];
     });
 
-    console.log(data);
+    let key = [];
+    let value = [];
+
+    data.map((data) => {
+        key.push(data.split(',')[0]);
+        value.push(data.split(',')[1]);
+    });
+
+    for (let i = 0; i < key.length; i++) {
+        if (key[i] == password) {
+            return value[i];
+        }
+    }
+
+    return -1;
 }
 
 function calPoint(predictPoint) {
