@@ -15,7 +15,7 @@ cd ..
 
 ```bash
 cd files
-tail -f security.log
+tail -f files/security.log
 ```
 
 -   두번째 터미널창
@@ -23,5 +23,5 @@ tail -f security.log
 
 ```bash
 cd src
-node securityMain.js
+node src/securityMain.js
 ```

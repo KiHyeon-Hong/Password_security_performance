@@ -42,10 +42,10 @@ async function performanceTest(password) {
         let predict = calPoint(result.predictPoint);
         let sucFail = orig == predict ? 'Success' : 'Fail';
 
-        console.log(`${timestamp},  ${password}          ${orig}   ${predict}   ${sucFail}`);
+        console.log(`${timestamp},  ${password}          L${orig}   L${predict}   ${sucFail}`);
         console.log();
 
-        fs.appendFileSync(__dirname + '/../files/security.log', `${timestamp},  ${password}          ${orig}   ${predict}   ${sucFail}\n`, 'utf8');
+        fs.appendFileSync(__dirname + '/../files/security.log', `${timestamp},  ${password}          L${orig}   L${predict}   ${sucFail}\n`, 'utf8');
 
         main();
     });
