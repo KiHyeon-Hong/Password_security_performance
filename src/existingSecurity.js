@@ -19,8 +19,9 @@ function performanceTest(password) {
   var zxcvbnPoint = parseInt(parseInt(koreanZxcvbn(password).score * 2 + comparePoint.frequencyComparePoint(password)) / 2) < 5 ? parseInt(parseInt(koreanZxcvbn(password).score * 2 + comparePoint.frequencyComparePoint(password)) / 2) : 4;
   var luds = parseInt(parseInt(ludsPoint.ludsPoint(password).nScore) / 20) < 5 ? parseInt(parseInt(ludsPoint.ludsPoint(password).nScore) / 20) : 4;
   var levenshteinPoint = parseInt(levenshteinDistance.totalLVD(password)) < 3 ? 0 : 1;
+  var levenshteinPointUpdate = parseInt(levenshteinDistance.totalLVDUpgrade(password)) < 3 ? 0 : 1;
 
-  console.log(`zxcvbn: ${zxcvbnPoint}, LUDS: ${luds}, Levenshtein distance: ${levenshteinPoint}`);
+  console.log(`zxcvbn: ${zxcvbnPoint}, LUDS: ${luds}, Levenshtein distance(Korean based): ${levenshteinPoint}, Levenshtein distance(English based): ${levenshteinPointUpdate}`);
 
   main();
 }
