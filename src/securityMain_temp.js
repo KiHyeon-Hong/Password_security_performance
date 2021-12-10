@@ -40,12 +40,12 @@ async function performanceTest(password) {
         let timestamp = `${year}.${month}.${date}. ${hours}:${minutes}:${parseInt(seconds / 10) == 0 ? '0' + seconds : seconds}`;
         let orig = origPoint(password);
         let predict = calPoint(result.predictPoint);
-        let sucFail = orig === predict ? 'Success' : 'Fail';
+        let sucFail = orig == predict ? 'Success' : 'Fail';
 
-        console.log(`${timestamp},  ${password}          ${orig}   ${predict}   ${sucFail}`);
+        console.log(`${timestamp},  ${password}          L${orig}   L${predict}   ${sucFail}`);
         console.log();
 
-        fs.appendFileSync(__dirname + '/../files/security.log', `${timestamp},  ${password}          ${orig}   ${predict}   ${sucFail}\n`, 'utf8');
+        fs.appendFileSync(__dirname + '/../files/security.log', `${timestamp},  ${password}          L${orig}   L${predict}   ${sucFail}\n`, 'utf8');
 
         main();
     });
@@ -94,13 +94,19 @@ function origPoint(password) {
         }
     }
 
-    return '평가대상아님';
+    return -1;
 }
 
 function calPoint(predictPoint) {
-  if (predictPoint < 0.5) {
-      return '보안수준낮음';
-  } else {
-      return '보안수준높음';
-  }
+    if (predictPoint < 0.15) {
+        return 0;
+    } else if (predictPoint < 0.3) {
+        return 1;
+    } else if (predictPoint < 0.6) {
+        return 2;
+    } else if (predictPoint < 0.9) {
+        return 3;
+    } else {
+        return 4;
+    }
 }
